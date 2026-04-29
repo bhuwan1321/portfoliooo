@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
@@ -14,7 +14,7 @@ const styles = `
   html { scroll-behavior: smooth; }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
 
-  /* CURTAIN */
+  /* ── CURTAIN ── */
   .pf-curtain {
     position: fixed; inset: 0; z-index: 999;
     display: flex; align-items: center; justify-content: center;
@@ -38,11 +38,28 @@ const styles = `
   .pf-curtain.visible .pf-curtain-label { opacity: 1; transform: none; }
   .pf-curtain.open .pf-curtain-label { opacity: 0; transition: opacity .3s; }
 
-  /* CONTENT REVEAL */
+  /* ── CONTENT REVEAL ── */
   .pf-content { opacity: 0; transform: translateY(16px); transition: opacity .6s 1s, transform .6s 1s; }
   .pf-content.visible { opacity: 1; transform: none; }
 
-  /* NAV */
+  /* ── SCROLL ANIMATIONS ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .55s cubic-bezier(.16,1,.3,1), transform .55s cubic-bezier(.16,1,.3,1);
+    transition-delay: var(--reveal-delay, 0s);
+  }
+  .reveal.in { opacity: 1; transform: none; }
+
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-24px);
+    transition: opacity .5s cubic-bezier(.16,1,.3,1), transform .5s cubic-bezier(.16,1,.3,1);
+    transition-delay: var(--reveal-delay, 0s);
+  }
+  .reveal-left.in { opacity: 1; transform: none; }
+
+  /* ── NAV ── */
   .pf-nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     padding: 1.5rem 3rem; display: flex; justify-content: space-between;
@@ -54,20 +71,17 @@ const styles = `
   .pf-nav-links a { color: var(--muted); text-decoration: none; font-size: .85rem; letter-spacing: .05em; text-transform: uppercase; transition: color .2s; }
   .pf-nav-links a:hover { color: var(--accent); }
 
-  /* HAMBURGER */
+  /* ── HAMBURGER ── */
   .pf-hamburger {
     display: none; flex-direction: column; gap: 5px; cursor: pointer;
     background: none; border: none; padding: 4px;
   }
-  .pf-hamburger span {
-    display: block; width: 22px; height: 2px; background: var(--text);
-    transition: all .3s;
-  }
+  .pf-hamburger span { display: block; width: 22px; height: 2px; background: var(--text); transition: all .3s; }
   .pf-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
   .pf-hamburger.open span:nth-child(2) { opacity: 0; }
   .pf-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-  /* MOBILE MENU */
+  /* ── MOBILE MENU ── */
   .pf-mobile-menu {
     display: none; position: fixed; inset: 0; z-index: 99;
     background: rgba(10,10,10,.97); backdrop-filter: blur(12px);
@@ -83,7 +97,7 @@ const styles = `
 
   .pf-section { padding: 6rem 3rem; }
 
-  /* HERO */
+  /* ── HERO ── */
   .pf-hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding-top: 8rem; position: relative; overflow: hidden; }
   .pf-hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
   .pf-hero-tag { display: inline-flex; align-items: center; gap: .5rem; background: rgba(200,245,96,.08); border: 1px solid rgba(200,245,96,.2); color: var(--accent); padding: .4rem 1rem; border-radius: 2rem; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 1.5rem; }
@@ -117,9 +131,9 @@ const styles = `
   .pf-section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
   .pf-h2 { font-family: 'Syne', sans-serif; font-size: clamp(2rem,4vw,3rem); font-weight: 800; letter-spacing: -.03em; margin-bottom: .75rem; }
 
-  /* PROJECTS */
+  /* ── PROJECTS ── */
   .pf-projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 3rem; }
-  .pf-project-card { background: var(--card); border: 1px solid var(--border); border-radius: 1.2rem; padding: 1.75rem; transition: all .3s; position: relative; overflow: hidden; }
+  .pf-project-card { background: var(--card); border: 1px solid var(--border); border-radius: 1.2rem; padding: 1.75rem; transition: all .3s; position: relative; overflow: hidden; text-decoration: none; color: inherit; display: block; }
   .pf-project-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); transform: scaleX(0); transition: transform .4s; }
   .pf-project-card:hover::before { transform: scaleX(1); }
   .pf-project-card:hover { border-color: #333; transform: translateY(-4px); }
@@ -133,43 +147,66 @@ const styles = `
   .pf-metric-label { color: var(--muted); }
   .pf-tech-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
   .pf-tech-tag { background: rgba(200,245,96,.06); border: 1px solid rgba(200,245,96,.15); color: var(--accent); padding: .25rem .65rem; border-radius: .2rem; font-size: .72rem; font-weight: 500; }
-  .pf-project-link { display: inline-flex; align-items: center; gap: .4rem; color: var(--muted); font-size: .8rem; text-decoration: none; margin-top: 1rem; transition: color .2s; }
-  .pf-project-link:hover { color: var(--accent); }
   .pf-project-visual { background: var(--bg3); border-radius: .75rem; height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid var(--border); font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; color: rgba(200,245,96,.08); letter-spacing: -.05em; }
 
-  /* SKILLS — updated pill styles */
+  /* ── SKILLS ── */
   .pf-skills-bg { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
   .pf-skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 1.5rem; margin-top: 3rem; }
-  .pf-skill-cat { background: var(--card); border: 1px solid var(--border); border-radius: 1rem; padding: 1.5rem; }
+  .pf-skill-cat {
+    background: var(--card); border: 1px solid var(--border); border-radius: 1rem; padding: 1.5rem;
+    position: relative; overflow: hidden;
+  }
+  .pf-skill-cat::after {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(200,245,96,.05), transparent 70%);
+    pointer-events: none; opacity: 0; transition: opacity .4s;
+  }
+  .pf-skill-cat:hover::after { opacity: 1; }
   .pf-skill-cat-icon { width: 36px; height: 36px; background: rgba(200,245,96,.1); border-radius: .5rem; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; font-size: 1rem; }
   .pf-skill-cat-title { font-family: 'Syne', sans-serif; font-size: .85rem; font-weight: 700; margin-bottom: .75rem; }
   .pf-skill-pills { display: flex; flex-wrap: wrap; gap: .5rem; }
 
-  /* BLACK LOGOS — light pill bg so black icons are visible */
+  /* Pill — base state (hidden) then animated in via JS */
   .pf-skill-pill {
     display: flex; align-items: center; gap: .45rem;
     background: #ebebeb; border: 1px solid #ccc;
     padding: .32rem .75rem; border-radius: .25rem;
     font-size: .72rem; font-weight: 500; color: #1a1a1a;
-    transition: border-color .2s, background .2s;
+    opacity: 0; transform: translateY(10px) scale(.95);
+    transition: opacity .35s cubic-bezier(.16,1,.3,1),
+                transform .35s cubic-bezier(.16,1,.3,1),
+                background .2s, border-color .2s;
+    transition-delay: var(--pill-delay, 0s);
   }
   .pf-skill-pill:hover { border-color: #999; background: #e0e0e0; }
-  .pf-skill-pill img {
-    width: 18px; height: 18px; object-fit: contain;
-    filter: brightness(0);
-    transition: filter .2s;
-    flex-shrink: 0;
-  }
+  .pf-skill-pill.pill-in { opacity: 1; transform: none; }
+  .pf-skill-pill img { width: 18px; height: 18px; object-fit: contain; filter: brightness(0); transition: filter .2s; flex-shrink: 0; }
 
-  /* EXPERIENCE */
+  /* Skill bar */
+  .skill-count-bar { height: 3px; background: rgba(200,245,96,.12); border-radius: 2px; margin-top: 1.2rem; overflow: hidden; }
+  .skill-count-fill { height: 100%; background: var(--accent); border-radius: 2px; width: 0; transition: width 1.2s cubic-bezier(.16,1,.3,1); }
+
+  /* ── EXPERIENCE ── */
   .pf-exp-list { margin-top: 3rem; display: flex; flex-direction: column; gap: 1rem; }
-  .pf-exp-item { background: var(--card); border: 1px solid var(--border); border-radius: 1rem; padding: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; transition: border-color .2s; }
-  .pf-exp-item:hover { border-color: #333; }
+  .pf-exp-item {
+    background: var(--card); border: 1px solid var(--border); border-radius: 1rem; padding: 1.5rem;
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem;
+    transition: border-color .25s, transform .25s;
+    position: relative; overflow: hidden;
+  }
+  .pf-exp-item::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: var(--accent); transform: scaleY(0); transform-origin: bottom;
+    transition: transform .35s cubic-bezier(.16,1,.3,1);
+    border-radius: 0 0 0 1rem;
+  }
+  .pf-exp-item:hover { border-color: #333; transform: translateX(4px); }
+  .pf-exp-item:hover::before { transform: scaleY(1); }
   .pf-exp-role { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: .25rem; }
   .pf-exp-org { font-size: .85rem; color: var(--accent); }
   .pf-exp-period { font-size: .8rem; color: var(--muted); white-space: nowrap; background: var(--bg3); padding: .3rem .8rem; border-radius: .25rem; border: 1px solid var(--border); align-self: flex-start; flex-shrink: 0; }
 
-  /* CONTACT */
+  /* ── CONTACT ── */
   .pf-contact-bg { background: var(--bg2); border-top: 1px solid var(--border); }
   .pf-contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; margin-top: 3rem; }
   .pf-contact-big { font-family: 'Syne', sans-serif; font-size: clamp(2.5rem,5vw,4.5rem); font-weight: 800; letter-spacing: -.04em; line-height: 1; }
@@ -181,7 +218,7 @@ const styles = `
   .pf-achievement-row { display: flex; justify-content: space-between; font-size: .85rem; margin-bottom: .6rem; gap: 1rem; }
   .pf-achievement-row:last-child { margin-bottom: 0; }
 
-  /* FOOTER */
+  /* ── FOOTER ── */
   .pf-footer { padding: 2rem 3rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
   .pf-footer-name { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--muted); font-size: .85rem; }
   .pf-dot { width: 4px; height: 4px; background: var(--accent); border-radius: 50%; display: inline-block; margin: 0 .5rem; vertical-align: middle; }
@@ -190,8 +227,6 @@ const styles = `
   .pf-bg-glow2 { position: fixed; bottom: -20%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(110,231,183,.03), transparent 60%); pointer-events: none; z-index: 0; }
 
   /* ── RESPONSIVE ── */
-
-  /* Tablet: 768px–1024px */
   @media (max-width: 1024px) {
     .pf-nav { padding: 1.2rem 2rem; }
     .pf-section { padding: 5rem 2rem; }
@@ -200,47 +235,30 @@ const styles = `
     .pf-footer { padding: 2rem; }
   }
 
-  /* Mobile: ≤768px */
   @media (max-width: 768px) {
     .pf-nav { padding: 1rem 1.25rem; }
     .pf-nav-links { display: none; }
     .pf-hamburger { display: flex; }
     .pf-mobile-menu { display: flex; }
-
     .pf-section { padding: 4rem 1.25rem; }
-
-    /* Hero stacks vertically; card comes first on mobile */
     .pf-hero { padding-top: 6rem; min-height: auto; padding-bottom: 3rem; }
     .pf-hero-grid { grid-template-columns: 1fr; gap: 2.5rem; }
     .pf-hero-grid > div:first-child { order: 2; }
     .pf-hero-grid > div:last-child  { order: 1; }
     .pf-hero-desc { max-width: 100%; }
-
-    /* Projects: single column */
     .pf-projects-grid { grid-template-columns: 1fr; }
     .pf-project-featured { grid-column: auto; grid-template-columns: 1fr; }
     .pf-project-visual { display: none; }
-
-    /* Skills: 2-col on mobile min */
     .pf-skills-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; }
     .pf-skill-cat { padding: 1.1rem; }
-
-    /* Experience: stack period badge below role */
     .pf-exp-item { flex-direction: column; gap: .75rem; }
     .pf-exp-period { align-self: flex-start; }
-
-    /* Contact: single column */
     .pf-contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-
-    /* Achievement row: allow wrapping */
     .pf-achievement-row { flex-wrap: wrap; }
-
     .pf-footer { padding: 1.5rem 1.25rem; flex-direction: column; text-align: center; }
-
     .pf-stat-grid { gap: .5rem; }
   }
 
-  /* Small mobile: ≤420px */
   @media (max-width: 420px) {
     .pf-skills-grid { grid-template-columns: 1fr; }
     .pf-stat-grid { grid-template-columns: 1fr 1fr; }
@@ -255,7 +273,7 @@ const ICON = (slug) => `https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/${sl
 
 const skillCategories = [
   {
-    icon: "✦", title: "Design Tools",
+    icon: "✦", title: "Design Tools", pct: 92,
     skills: [
       { name: "Figma",         logo: ICON("figma") },
       { name: "Photoshop",     logo: ICON("adobephotoshop") },
@@ -265,7 +283,7 @@ const skillCategories = [
     ],
   },
   {
-    icon: "◈", title: "UI/UX",
+    icon: "◈", title: "UI/UX", pct: 88,
     skills: [
       { name: "Wireframing" },
       { name: "Prototyping" },
@@ -275,7 +293,7 @@ const skillCategories = [
     ],
   },
   {
-    icon: "⬡", title: "Frontend",
+    icon: "⬡", title: "Frontend", pct: 85,
     skills: [
       { name: "React.js",     logo: ICON("react") },
       { name: "Next.js",      logo: ICON("nextdotjs") },
@@ -285,7 +303,7 @@ const skillCategories = [
     ],
   },
   {
-    icon: "◎", title: "Motion & Visual",
+    icon: "◎", title: "Motion & Visual", pct: 80,
     skills: [
       { name: "Animation" },
       { name: "Micro-interactions" },
@@ -294,7 +312,7 @@ const skillCategories = [
     ],
   },
   {
-    icon: "▣", title: "Backend & Cloud",
+    icon: "▣", title: "Backend & Cloud", pct: 75,
     skills: [
       { name: "Node.js",  logo: ICON("nodedotjs") },
       { name: "Firebase", logo: ICON("firebase") },
@@ -304,7 +322,7 @@ const skillCategories = [
     ],
   },
   {
-    icon: "◇", title: "Languages",
+    icon: "◇", title: "Languages", pct: 82,
     skills: [
       { name: "JavaScript", logo: ICON("javascript") },
       { name: "TypeScript", logo: ICON("typescript") },
@@ -356,10 +374,83 @@ const achievements = [
   { title: "Top 100 Coders — Rank 75, Krithomedh", year: "2025" },
 ];
 
+/* ─────────────────────────────────────────────
+   useScrollReveal — wires IntersectionObserver
+   to any element with a ref returned from here
+───────────────────────────────────────────── */
+function useScrollReveal(deps = []) {
+  const refs = useRef([]);
+
+  useEffect(() => {
+    const els = refs.current.filter(Boolean);
+    if (!els.length) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const el = entry.target;
+
+          if (entry.isIntersecting) {
+            // Enter viewport
+            el.classList.add("in");
+
+            el.querySelectorAll(".skill-count-fill").forEach((bar) => {
+              requestAnimationFrame(() => {
+                bar.style.width = (bar.dataset.pct || 0) + "%";
+              });
+            });
+
+            el.querySelectorAll(".pf-skill-pill").forEach((pill, pi) => {
+              setTimeout(() => pill.classList.add("pill-in"), 80 + pi * 55);
+            });
+
+          } else {
+            // Leave viewport (scroll up/down)
+            el.classList.remove("in");
+
+            el.querySelectorAll(".skill-count-fill").forEach((bar) => {
+              bar.style.width = "0%";
+            });
+
+            el.querySelectorAll(".pf-skill-pill").forEach((pill) => {
+              pill.classList.remove("pill-in");
+            });
+          }
+        });
+      },
+      {
+        threshold: 0.12,
+        rootMargin: "0px 0px -40px 0px",
+      }
+    );
+
+    els.forEach((el) => io.observe(el));
+
+    return () => io.disconnect();
+  }, deps);
+
+  const setRef = (i) => (el) => {
+    refs.current[i] = el;
+  };
+
+  return setRef;
+}
+
 export default function Portfolio() {
   const [phase, setPhase] = useState("init");
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // We collect all reveal-able elements into one flat list
+  // Indices: 0-5  → skill cards, 6 = skills heading group
+  //          7-11 → exp items,  12 = exp heading group
+  const totalRefs =
+    skillCategories.length +   // skill cards
+    1 +                        // skills section label+h2+p
+    positions.length +         // exp items
+    1;                         // exp section label+h2
+
+  const setRef = useScrollReveal([phase]);
 
   useEffect(() => {
     document.title = "Bhuwan Kumar Rasala — Portfolio";
@@ -375,7 +466,6 @@ export default function Portfolio() {
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -399,6 +489,12 @@ export default function Portfolio() {
     { id: "contact",   label: "Contact" },
   ];
 
+  // Ref index helpers
+  const SKILLS_HEADER_IDX = 0;
+  const SKILL_CARD_START  = 1;                            // 1..6
+  const EXP_HEADER_IDX    = 1 + skillCategories.length;  // 7
+  const EXP_ITEM_START    = EXP_HEADER_IDX + 1;          // 8..12
+
   return (
     <>
       <style>{styles}</style>
@@ -417,11 +513,9 @@ export default function Portfolio() {
         <div className="pf-bg-glow" />
         <div className="pf-bg-glow2" />
 
-        {/* NAV */}
+        {/* ── NAV ── */}
         <nav className={`pf-nav${scrolled ? " scrolled" : ""}`}>
           <a className="pf-logo" href="#home">RBK.</a>
-
-          {/* Desktop links */}
           <ul className="pf-nav-links">
             {navItems.map(({ id, label }) => (
               <li key={id}>
@@ -431,8 +525,6 @@ export default function Portfolio() {
               </li>
             ))}
           </ul>
-
-          {/* Hamburger */}
           <button
             className={`pf-hamburger${menuOpen ? " open" : ""}`}
             onClick={() => setMenuOpen((v) => !v)}
@@ -442,7 +534,7 @@ export default function Portfolio() {
           </button>
         </nav>
 
-        {/* Mobile menu overlay */}
+        {/* ── MOBILE MENU ── */}
         <div className={`pf-mobile-menu${menuOpen ? " open" : ""}`}>
           {navItems.map(({ id, label }) => (
             <a key={id} href={`#${id}`} onClick={(e) => { e.preventDefault(); scrollTo(id); }}>
@@ -451,7 +543,7 @@ export default function Portfolio() {
           ))}
         </div>
 
-        {/* HERO */}
+        {/* ── HERO ── */}
         <section className="pf-hero pf-section" id="home">
           <div className="pf-hero-grid">
             <div>
@@ -498,16 +590,27 @@ export default function Portfolio() {
           </div>
         </section>
 
-        {/* PROJECTS */}
-        <section className="pf-section" id="projects" style={{ background: "var(--bg2)", borderTop: "1px solid var(--border)" }}>
+        {/* ── PROJECTS ── */}
+        <section
+          className="pf-section"
+          id="projects"
+          style={{ background: "var(--bg2)", borderTop: "1px solid var(--border)" }}
+        >
           <div className="pf-section-label">Selected Work</div>
           <h2 className="pf-h2">Projects</h2>
           <p style={{ color: "var(--muted)", maxWidth: "55ch" }}>
             Real-world platforms with measurable impact — from corporate identity to international academic conferences.
           </p>
+
           <div className="pf-projects-grid">
             {projects.map((p) => (
-              <div key={p.num} className={`pf-project-card${p.featured ? " pf-project-featured" : ""}`}>
+              <a
+                key={p.num}
+                href={p.link}
+                target="_blank"
+                rel="noreferrer"
+                className={`pf-project-card${p.featured ? " pf-project-featured" : ""}`}
+              >
                 <div>
                   <div className="pf-project-num">{p.num}</div>
                   <div className="pf-project-title">{p.title}</div>
@@ -521,35 +624,56 @@ export default function Portfolio() {
                     ))}
                   </div>
                   <div className="pf-tech-tags">
-                    {p.tech.map((t) => <span className="pf-tech-tag" key={t}>{t}</span>)}
+                    {p.tech.map((t) => (
+                      <span className="pf-tech-tag" key={t}>{t}</span>
+                    ))}
                   </div>
-                  <a href={p.link} className="pf-project-link" target="_blank" rel="noreferrer">
-                    {p.linkLabel} 
-                  </a>
                 </div>
                 {p.featured && (
                   <div className="pf-project-visual">
                     <span>{p.visual}</span>
-                    <span style={{ fontSize: "1rem", color: "rgba(200,245,96,.15)", marginTop: ".5rem" }}>{p.visualSub}</span>
+                    <span style={{ fontSize: "1rem", color: "rgba(200,245,96,.15)", marginTop: ".5rem" }}>
+                      {p.visualSub}
+                    </span>
                   </div>
                 )}
-              </div>
+              </a>
             ))}
           </div>
         </section>
 
-        {/* SKILLS */}
+        {/* ── SKILLS ── */}
         <section className="pf-section pf-skills-bg" id="skills">
-          <div className="pf-section-label">Toolkit</div>
-          <h2 className="pf-h2">Skills</h2>
+          {/* Animated heading group */}
+          <div
+            ref={setRef(SKILLS_HEADER_IDX)}
+            className="reveal"
+            style={{ "--reveal-delay": "0s" }}
+          >
+            <div className="pf-section-label">Toolkit</div>
+            <h2 className="pf-h2">Skills</h2>
+            <p style={{ color: "var(--muted)", maxWidth: "52ch" }}>
+              Every tool I reach for — from pixel-perfect design to cloud deployment.
+            </p>
+          </div>
+
           <div className="pf-skills-grid">
-            {skillCategories.map((cat) => (
-              <div className="pf-skill-cat" key={cat.title}>
+            {skillCategories.map((cat, ci) => (
+              <div
+                key={cat.title}
+                ref={setRef(SKILL_CARD_START + ci)}
+                className="pf-skill-cat reveal"
+                style={{ "--reveal-delay": `${ci * 0.07}s` }}
+              >
                 <div className="pf-skill-cat-icon">{cat.icon}</div>
                 <div className="pf-skill-cat-title">{cat.title}</div>
                 <div className="pf-skill-pills">
-                  {cat.skills.map((s) => (
-                    <span className="pf-skill-pill" key={s.name}>
+                  {cat.skills.map((s, si) => (
+                    <span
+                      key={s.name}
+                      className="pf-skill-pill"
+                      style={{ "--pill-delay": `${si * 0.055}s` }}
+                    >
                       {s.logo && (
                         <img
                           src={s.logo}
@@ -563,18 +687,32 @@ export default function Portfolio() {
                     </span>
                   ))}
                 </div>
+                
               </div>
             ))}
           </div>
         </section>
 
-        {/* POSITIONS */}
+        {/* ── POSITIONS / EXPERIENCE ── */}
         <section className="pf-section" id="positions">
-          <div className="pf-section-label">Experience</div>
-          <h2 className="pf-h2">Positions of Responsibility</h2>
+          {/* Animated heading group */}
+          <div
+            ref={setRef(EXP_HEADER_IDX)}
+            className="reveal"
+            style={{ "--reveal-delay": "0s" }}
+          >
+            <div className="pf-section-label">Experience</div>
+            <h2 className="pf-h2">Positions of Responsibility</h2>
+          </div>
+
           <div className="pf-exp-list">
-            {positions.map((p) => (
-              <div className="pf-exp-item" key={p.role + p.org}>
+            {positions.map((p, i) => (
+              <div
+                key={p.role + p.org}
+                ref={setRef(EXP_ITEM_START + i)}
+                className="pf-exp-item reveal-left"
+                style={{ "--reveal-delay": `${i * 0.09}s` }}
+              >
                 <div>
                   <div className="pf-exp-role">{p.role}</div>
                   <div className="pf-exp-org">{p.org}</div>
@@ -585,7 +723,7 @@ export default function Portfolio() {
           </div>
         </section>
 
-        {/* CONTACT */}
+        {/* ── CONTACT ── */}
         <section className="pf-section pf-contact-bg" id="contact">
           <div className="pf-section-label">Let's Talk</div>
           <div className="pf-contact-grid">
@@ -625,7 +763,7 @@ export default function Portfolio() {
           </div>
         </section>
 
-        {/* FOOTER */}
+        {/* ── FOOTER ── */}
         <footer className="pf-footer">
           <div className="pf-footer-name">
             Bhuwan Kumar Rasala <span className="pf-dot" /> UI/UX Designer & Developer <span className="pf-dot" /> VNRVJIET
