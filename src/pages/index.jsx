@@ -105,7 +105,7 @@ const styles = `
   .pf-btn-outline:hover { border-color: var(--accent); color: var(--accent); }
   .pf-hero-card { background: var(--card); border: 1px solid var(--border); border-radius: 1.2rem; padding: 2rem; position: relative; overflow: hidden; }
   .pf-hero-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 70% 20%, rgba(200,245,96,.06), transparent 60%); pointer-events: none; }
-  .pf-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #6ee7b7); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.8rem; color: #0a0a0a; margin-bottom: 1.2rem; }
+  .pf-avatar { width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #6ee7b7); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.8rem; color: #0a0a0a; margin-bottom: 1.2rem; }
   .pf-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: 1.5rem; }
   .pf-stat { background: var(--bg3); border-radius: .75rem; padding: 1rem; border: 1px solid var(--border); }
   .pf-stat-num { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--accent); }
@@ -470,7 +470,7 @@ export default function Portfolio() {
             </div>
             <div>
               <div className="pf-hero-card">
-                <div className="pf-avatar">RBK</div>
+                <div className="pf-avatar">RBK.</div>
                 <div style={{ fontFamily: "'Syne',sans-serif", fontSize: "1.1rem", fontWeight: 700, marginBottom: ".25rem" }}>
                   Bhuwan Kumar Rasala
                 </div>
