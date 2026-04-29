@@ -524,7 +524,7 @@ export default function Portfolio() {
                     {p.tech.map((t) => <span className="pf-tech-tag" key={t}>{t}</span>)}
                   </div>
                   <a href={p.link} className="pf-project-link" target="_blank" rel="noreferrer">
-                    {p.linkLabel} ↗
+                    {p.linkLabel} 
                   </a>
                 </div>
                 {p.featured && (
