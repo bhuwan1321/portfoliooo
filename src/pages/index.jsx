@@ -293,6 +293,8 @@ display:flex;
   .pf-h3 { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700; letter-spacing: -.02em; margin-top: 3.5rem; }
   .pf-exp-role { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: .25rem; }
   .pf-exp-org { font-size: .85rem; color: var(--accent-ink); }
+  .pf-exp-link { display: inline-block; margin-top: 1rem; font-size: .82rem; font-weight: 700; color: var(--accent-ink); text-decoration: none; }
+  .pf-exp-link:hover { text-decoration: underline; }
   .pf-exp-period { font-size: .8rem; color: var(--muted); white-space: nowrap; background: var(--bg3); padding: .3rem .8rem; border-radius: .25rem; border: 1px solid var(--border); align-self: flex-start; flex-shrink: 0; }
 
   .pf-contact-bg { background: var(--bg2); border-top: 1px solid var(--border); }
@@ -382,70 +384,56 @@ const projects = [
   },
   {
     num: "02", category: "personal", featured: true,
-    badge: "Demo Video", badgeKind: "video-pending",
-    title: "FuelDrop — Autonomous Drone Fuel Delivery System",
-    tagline: "Simulated autonomous drone delivery with live web tracking.",
-    desc: "A full-stack autonomous drone fuel-delivery simulation combining ROS2 navigation, SLAM-based mapping, and a live web tracking interface, run inside a simulated 3D city.",
+    badge: "GitHub", badgeKind: "github",
+    title: "Vulnerability Scanning Pipeline — DevSecOps CI",
+    tagline: "Seven open-source security scanners behind one script.",
+    desc: "A team DevSecOps project that I extended into one repeatable workflow running SAST, dependency, secrets, container and infrastructure-as-code scanners locally, in Docker and in GitHub Actions.",
     highlights: [
-      "5 ROS2 nodes coordinating navigation, mapping and delivery logic",
-      "360° LiDAR with SLAM-based live mapping and Smac A* planning over costmaps",
-      "Flask backend streaming live position to a Leaflet.js map via Server-Sent Events",
-      "3D city environment — 8 buildings, power lines, 20 m flight ceiling",
+      "Semgrep, pip-audit, TruffleHog, Gitleaks, Trivy, Checkov and Bandit run from a single script",
+      "One config file sets thresholds for local, Docker and CI runs",
+      "SARIF upload to the Security tab and per-scan report artifacts",
+      "In-app results dashboard fed by an API that reads the scan reports",
     ],
-    tech: ["ROS2 Humble", "Gazebo Classic 11", "Nav2", "SLAM", "Python", "Flask", "SQLite", "Leaflet.js", "SSE"],
-    visual: "FuelDrop", visualSub: "ROS2 · SLAM · Live Tracking",
-    cta: { label: "Watch Demo", kind: "video-pending" },
+    tech: ["Python", "Flask", "Docker", "GitHub Actions", "Semgrep", "Trivy"],
+    image: "/projects/vulnerability-scanning-pipeline.jpg", imageAlt: "Scan results panel listing seven security scans, all passing",
+    link: "https://github.com/bhuwan1321/vulnerability-scanning-pipeline",
+    cta: { label: "GitHub", kind: "github", href: "https://github.com/bhuwan1321/vulnerability-scanning-pipeline" },
   },
   {
     num: "03", category: "personal",
     badge: "GitHub", badgeKind: "github",
-    title: "Automated Compliance Checker",
-    tagline: "OCR + vision-language checks for legal metrology labels.",
-    desc: "A prototype AI compliance system that checks product labels and e-commerce listings against legal metrology requirements, combining OCR with rule-based analysis and multimodal visual reasoning.",
+    title: "Task Manager — Full-Stack App",
+    tagline: "React and Express app with PostgreSQL persistence.",
+    desc: "A full-stack task manager with due dates, overdue detection, filtering and a statistics dashboard, backed by a REST API and a PostgreSQL database.",
     highlights: [
-      "OCR + rule-based analysis to extract and check label declarations",
-      "Qwen-VL multimodal reasoning to catch defects beyond text-only extraction",
-      "Runs as a low-cost Raspberry Pi prototype with a Node.js backend",
-      "Cloud dashboard for real-time scoring and visualization",
+      "REST API with parameterized SQL queries and server-side validation",
+      "Completion donut chart and a 7-day completed-task chart",
+      "Overdue detection from due dates, with All, Pending and Completed filters",
+      "Tested end to end against a real PostgreSQL database",
     ],
-    tech: ["Python", "OCR", "Qwen-VL", "Raspberry Pi", "Node.js"],
-    link: "https://github.com/lohithajaeger/compliance-checker-sih",
-    cta: { label: "GitHub", kind: "github", href: "https://github.com/lohithajaeger/compliance-checker-sih" },
+    tech: ["React", "Vite", "Node.js", "Express", "PostgreSQL", "Recharts"],
+    image: "/projects/task-manager.jpg", imageAlt: "Task Manager dashboard with task counts, a completion donut chart and a seven-day activity chart",
+    link: "https://github.com/bhuwan1321/task-manager",
+    cta: { label: "GitHub", kind: "github", href: "https://github.com/bhuwan1321/task-manager" },
   },
   {
     num: "04", category: "personal",
-    badge: "Live", badgeKind: "live",
-    title: "ICMACC 2026 — Conference Website",
-    tagline: "Production site for an international conference at VNRVJIET.",
-    desc: "A responsive full-stack website for ICMACC 2026, shipped through a CI/CD pipeline for fast and reliable releases. Handles conference information, registration workflows and Razorpay payments with real-time transaction verification.",
+    badge: "GitHub", badgeKind: "github",
+    title: "Engineer Dashboard — Personal Tracker",
+    tagline: "Fitness, DSA, academics and career in one dashboard.",
+    desc: "A Next.js and Firebase dashboard for tracking fitness logs, DSA practice, academics and engineering tasks, with Google sign-in.",
     highlights: [
-      "CI/CD pipeline powering build and deployment on every release",
-      "Razorpay payment integration with real-time transaction verification",
-      "Live countdown, real-time visitor counter, and dynamic sponsor sections",
-      "Performance tuning with WebP assets and lazy loading",
+      "Sections for diet, workout, DSA, engineering tasks, academics and a health monitor",
+      "Firestore security rules limit every collection to the signed-in owner",
+      "Streaks, charts and a 30-day heatmap",
     ],
-    metrics: [{ val: "25,000+", label: "site hits" }],
-    tech: ["Next.js", "Firebase", "Razorpay", "CI/CD"],
-    link: "https://icmacc.org",
-    cta: { label: "Live Website", kind: "live", href: "https://icmacc.org" },
+    tech: ["Next.js", "TypeScript", "Firebase", "Tailwind CSS", "Recharts", "Zustand"],
+    image: "/projects/engineer-dashboard.jpg", imageAlt: "Engineer Dashboard sign-in screen with a Sign in with Google button",
+    link: "https://github.com/bhuwan1321/engineer-dashboard",
+    cta: { label: "GitHub", kind: "github", href: "https://github.com/bhuwan1321/engineer-dashboard" },
   },
   {
-    num: "05", category: "experience",
-    badge: "Professional Experience", badgeKind: "experience",
-    title: "XEVO — Autonomous Robotics",
-    tagline: "ROS Developer, Sep 2024 – Mar 2025.",
-    desc: "Professional robotics role at an early-stage startup, building autonomous navigation and SLAM software from sensor simulation through to real-time localization and path planning.",
-    highlights: [
-      "Developed autonomous navigation and SLAM software in ROS and Python",
-      "Simulated LiDAR and camera sensor integration in Gazebo for real-time localization and path planning",
-      "Containerized the development environment with Docker across a 4-member team",
-    ],
-    tech: ["ROS", "Python", "Gazebo", "SLAM", "LiDAR", "Docker", "Linux"],
-    link: "https://www.linkedin.com/feed/update/urn:li:activity:7383402937450024960/",
-    cta: { label: "View Experience", kind: "linkedin", href: "https://www.linkedin.com/feed/update/urn:li:activity:7383402937450024960/" },
-  },
-  {
-    num: "06", category: "personal",
+    num: "05", category: "personal",
     badge: "GitHub", badgeKind: "github",
     title: "IPL Score Prediction — End-to-End ML Pipeline",
     tagline: "Gradient boosting model for first-innings scores and win probability.",
@@ -466,65 +454,37 @@ const projects = [
     cta: { label: "GitHub", kind: "github", href: "https://github.com/bhuwan1321/ipl_score_predictor" },
   },
   {
-    num: "07", category: "personal",
+    num: "06", category: "personal",
     badge: "GitHub", badgeKind: "github",
-    title: "Vulnerability Scanning Pipeline — DevSecOps CI",
-    tagline: "Seven open-source security scanners behind one script.",
-    desc: "A team DevSecOps project that I extended into one repeatable workflow running SAST, dependency, secrets, container and infrastructure-as-code scanners locally, in Docker and in GitHub Actions.",
+    title: "Automated Compliance Checker",
+    tagline: "OCR + vision-language checks for legal metrology labels.",
+    desc: "A prototype AI compliance system that checks product labels and e-commerce listings against legal metrology requirements, combining OCR with rule-based analysis and multimodal visual reasoning.",
     highlights: [
-      "Semgrep, pip-audit, TruffleHog, Gitleaks, Trivy, Checkov and Bandit run from a single script",
-      "One config file sets thresholds for local, Docker and CI runs",
-      "SARIF upload to the Security tab and per-scan report artifacts",
-      "In-app results dashboard fed by an API that reads the scan reports",
+      "OCR + rule-based analysis to extract and check label declarations",
+      "Qwen-VL multimodal reasoning to catch defects beyond text-only extraction",
+      "Runs as a low-cost Raspberry Pi prototype with a Node.js backend",
+      "Cloud dashboard for real-time scoring and visualization",
     ],
-    tech: ["Python", "Flask", "Docker", "GitHub Actions", "Semgrep", "Trivy"],
-    image: "/projects/vulnerability-scanning-pipeline.jpg", imageAlt: "Scan results panel listing seven security scans, all passing",
-    link: "https://github.com/bhuwan1321/vulnerability-scanning-pipeline",
-    cta: { label: "GitHub", kind: "github", href: "https://github.com/bhuwan1321/vulnerability-scanning-pipeline" },
-  },
-  {
-    num: "08", category: "personal",
-    badge: "GitHub", badgeKind: "github",
-    title: "Task Manager — Full-Stack App",
-    tagline: "React and Express app with PostgreSQL persistence.",
-    desc: "A full-stack task manager with due dates, overdue detection, filtering and a statistics dashboard, backed by a REST API and a PostgreSQL database.",
-    highlights: [
-      "REST API with parameterized SQL queries and server-side validation",
-      "Completion donut chart and a 7-day completed-task chart",
-      "Overdue detection from due dates, with All, Pending and Completed filters",
-      "Tested end to end against a real PostgreSQL database",
-    ],
-    tech: ["React", "Vite", "Node.js", "Express", "PostgreSQL", "Recharts"],
-    image: "/projects/task-manager.jpg", imageAlt: "Task Manager dashboard with task counts, a completion donut chart and a seven-day activity chart",
-    link: "https://github.com/bhuwan1321/task-manager",
-    cta: { label: "GitHub", kind: "github", href: "https://github.com/bhuwan1321/task-manager" },
-  },
-  {
-    num: "09", category: "personal",
-    badge: "GitHub", badgeKind: "github",
-    title: "Engineer Dashboard — Personal Tracker",
-    tagline: "Fitness, DSA, academics and career in one dashboard.",
-    desc: "A Next.js and Firebase dashboard for tracking fitness logs, DSA practice, academics and engineering tasks, with Google sign-in.",
-    highlights: [
-      "Sections for diet, workout, DSA, engineering tasks, academics and a health monitor",
-      "Firestore security rules limit every collection to the signed-in owner",
-      "Streaks, charts and a 30-day heatmap",
-    ],
-    tech: ["Next.js", "TypeScript", "Firebase", "Tailwind CSS", "Recharts", "Zustand"],
-    image: "/projects/engineer-dashboard.jpg", imageAlt: "Engineer Dashboard sign-in screen with a Sign in with Google button",
-    link: "https://github.com/bhuwan1321/engineer-dashboard",
-    cta: { label: "GitHub", kind: "github", href: "https://github.com/bhuwan1321/engineer-dashboard" },
+    tech: ["Python", "OCR", "Qwen-VL", "Raspberry Pi", "Node.js"],
+    link: "https://github.com/lohithajaeger/compliance-checker-sih",
+    cta: { label: "GitHub", kind: "github", href: "https://github.com/lohithajaeger/compliance-checker-sih" },
   },
 ];
 
 
 const experience = [
+  { role: "Website Developer", org: "ICMACC 2026 · VNRVJIET (college project)", period: "2026", tags: ["Next.js", "Firebase", "Razorpay", "CI/CD"], link: { label: "icmacc.org", href: "https://icmacc.org" }, points: [
+    "Built the responsive full-stack website for ICMACC 2026, an international conference at VNRVJIET, shipped through a CI/CD pipeline.",
+    "Integrated Razorpay payments with real-time transaction verification for registration workflows.",
+    "Added a live countdown, a real-time visitor counter and dynamic sponsor sections, with WebP assets and lazy loading for performance.",
+    "Reached 25,000+ site hits.",
+  ] },
   { role: "Website Developer", org: "Q Electric", period: "Aug 2025 – Oct 2025", tags: ["Next.js", "React", "Tailwind CSS", "Three.js", "Vercel"], points: [
     "Gathered requirements with stakeholders, then designed and launched a responsive corporate website.",
     "Integrated an interactive 3D model to boost engagement and deployed on Vercel for reliable production hosting.",
     "Improved load performance with lazy loading, code splitting and asset optimization while carrying the brand identity across devices and browsers.",
   ] },
-  { role: "ROS Developer", org: "Xevo – Startup", period: "Sep 2024 – Mar 2025", tags: ["ROS", "Python", "Gazebo", "Docker"], points: [
+  { role: "ROS Developer", org: "Xevo – Startup", period: "Sep 2024 – Mar 2025", tags: ["ROS", "Python", "Gazebo", "Docker"], link: { label: "View on LinkedIn", href: "https://www.linkedin.com/feed/update/urn:li:activity:7383402937450024960/" }, points: [
     "Built autonomous navigation and SLAM software in ROS and Python, simulating LiDAR/camera sensors in Gazebo for real-time localization and path planning.",
     "Containerized the development environment with Docker across a 4-member team for reproducible builds.",
   ] },
@@ -892,7 +852,7 @@ export default function Portfolio() {
         <div className="pf-section-label">Selected Work</div>
         <h2 className="pf-h2">Projects</h2>
         <p style={{ color: "var(--muted)", maxWidth: "55ch" }}>
-          Machine learning, robotics and the web, built end to end — personal engineering work alongside professional experience.
+          Machine learning, DevSecOps and the web, built end to end.
         </p>
         <div className="pf-projects-grid">
           {projects.map((p) => (
@@ -995,6 +955,11 @@ export default function Portfolio() {
                 <div className="pf-tech-tags">
                   {e.tags.map((t) => <span className="pf-tech-tag" key={t}>{t}</span>)}
                 </div>
+                {e.link && (
+                  <a href={e.link.href} target="_blank" rel="noreferrer" className="pf-exp-link">
+                    {e.link.label} <span aria-hidden="true">→</span>
+                  </a>
+                )}
               </div>
               <div className="pf-exp-period">{e.period}</div>
             </div>
