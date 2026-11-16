@@ -246,6 +246,10 @@ display:flex;
   .pf-badge-experience { color: #3454c9; background: rgba(140,170,255,.14); border-color: rgba(140,170,255,.35); }
   .pf-badge-dev { color: var(--muted); background: rgba(0,0,0,.03); border-color: var(--border); }
   .pf-badge-video-pending { color: var(--muted); background: rgba(0,0,0,.03); border-color: var(--border); }
+  .pf-badge-done { color: #0b6e4f; background: rgba(11,110,79,.1); border-color: rgba(11,110,79,.3); }
+  .pf-project-cardshot { display: block; width: calc(100% + 3.5rem); margin: -1.75rem -1.75rem 1.25rem; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-bottom: 1px solid var(--border); background: var(--bg3); }
+  .pf-project-visual.pf-project-shot { height: auto; padding: 0; overflow: hidden; display: block; background: var(--bg3); }
+  .pf-project-shot img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
   .pf-project-tagline { font-size: .82rem; color: var(--accent-ink); margin-bottom: .6rem; font-weight: 600; }
   .pf-project-highlights { list-style: none; display: flex; flex-direction: column; gap: .45rem; margin: 0 0 1.1rem; }
   .pf-project-highlights li { position: relative; padding-left: 1.1rem; font-size: .8rem; color: var(--muted); line-height: 1.6; }
@@ -329,6 +333,7 @@ display:flex;
     .pf-projects-grid { grid-template-columns: 1fr; }
     .pf-project-featured { grid-column: auto; grid-template-columns: 1fr; }
     .pf-project-visual { display: none; }
+    .pf-project-visual.pf-project-shot { display: block; }
     .pf-skills-grid { grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 1rem; }
     .pf-skill-cat { padding: 1.1rem; }
     .pf-exp-item { flex-direction: column; gap: .75rem; }
@@ -359,20 +364,21 @@ const skillCategories = [
 const projects = [
   {
     num: "01", category: "personal", featured: true,
-    badge: "In Development", badgeKind: "dev",
+    badge: "Completed", badgeKind: "done",
     title: "AIM OS — AI Infrastructure & Memory Platform",
-    tagline: "Self-hosted memory & persona layer for an LLM assistant.",
-    desc: "A self-hosted AI infrastructure platform giving an LLM assistant persistent memory and a consistent persona, built as a set of containerized microservices with a hybrid relational + vector memory store.",
+    tagline: "Self-hosted memory, research and voice layer for a personal AI assistant.",
+    desc: "A self-hosted personal AI built as containerized services around a hybrid relational and vector memory store. It remembers context, researches topics automatically and answers through a web dashboard and a Baymax-style voice.",
     highlights: [
-      "12 containerized microservices behind a Redis pub/sub event layer",
-      "Hybrid memory: PostgreSQL (relational) + Qdrant (vector/semantic search)",
-      "Phi-3-mini fine-tuned with LoRA (PEFT) for persona adaptation",
-      "Memory and persona services exposed through REST APIs",
+      "14 compose services coordinated over a Redis event bus",
+      "Four-tier memory with PostgreSQL (relational) and Qdrant (vector and semantic search)",
+      "Runs on local Ollama models, or on Groq and Gemini when API keys are set",
+      "Localhost-only ports and an automated test cycle that includes chaos recovery",
     ],
-    metrics: [{ val: "2.00 → 4.00 / 5", label: "persona consistency — own held-out evaluation" }],
-    tech: ["Python", "FastAPI", "Docker Compose", "Redis", "PostgreSQL", "Qdrant", "PyTorch", "LoRA / PEFT"],
-    visual: "AIM OS", visualSub: "LLM · Memory · LoRA",
-    cta: { label: "In Development", kind: "dev" },
+    tech: ["Python", "FastAPI", "Docker Compose", "Redis", "PostgreSQL", "Qdrant", "Ollama"],
+    visual: "AIM OS", visualSub: "LLM · Memory · Voice",
+    image: "/projects/aim-os.jpg", imageAlt: "AIM OS dashboard: a glowing arc-reactor interface with system stats, a project timeline and a chat bar",
+    link: "https://github.com/bhuwan1321/aim-os",
+    cta: { label: "GitHub", kind: "github", href: "https://github.com/bhuwan1321/aim-os" },
   },
   {
     num: "02", category: "personal", featured: true,
@@ -442,20 +448,72 @@ const projects = [
     num: "06", category: "personal",
     badge: "GitHub", badgeKind: "github",
     title: "IPL Score Prediction — End-to-End ML Pipeline",
-    tagline: "Benchmarking five regression models on a synthetic dataset.",
-    desc: "An end-to-end machine-learning pipeline for cricket score prediction, benchmarking five regression models on a synthetic dataset with an interactive interface for real-time inference.",
+    tagline: "Gradient boosting model for first-innings scores and win probability.",
+    desc: "An end-to-end machine-learning project that predicts IPL first-innings scores and win probability from 278,000+ ball-by-ball records (2008 to 2025), served by a Flask app with an interactive interface.",
     highlights: [
-      "Synthetic dataset of 30,000 records",
-      "Benchmarked Linear Regression, Random Forest, Extra Trees, Gradient Boosting and XGBoost",
-      "Interactive HTML/JS interface for real-time predictions",
+      "Training data built from 278,000+ deliveries across 1,169 matches",
+      "Gradient boosting regressor; powerplay and middle-overs form are estimated from team and venue averages",
+      "Win probability from head-to-head record, score advantage and toss",
+      "Flask API with input validation and player, venue and matchup lookups",
     ],
     metrics: [
-      { val: "0.92", label: "R² — best model, synthetic benchmark" },
-      { val: "6.54 runs", label: "MAE — synthetic benchmark" },
+      { val: "~16 runs", label: "MAE on held-out matches" },
+      { val: "0.56", label: "R² on held-out matches" },
     ],
-    tech: ["Python", "scikit-learn", "XGBoost", "HTML/JS"],
+    tech: ["Python", "scikit-learn", "Flask", "pandas", "HTML/JS"],
+    image: "/projects/ipl-score-predictor.jpg", imageAlt: "IPL Score Predictor showing a predicted score of 187 for Mumbai Indians with a likely range of 176 to 198 and a 57 percent win chance",
     link: "https://github.com/bhuwan1321/ipl_score_predictor",
     cta: { label: "GitHub", kind: "github", href: "https://github.com/bhuwan1321/ipl_score_predictor" },
+  },
+  {
+    num: "07", category: "personal",
+    badge: "GitHub", badgeKind: "github",
+    title: "Vulnerability Scanning Pipeline — DevSecOps CI",
+    tagline: "Seven open-source security scanners behind one script.",
+    desc: "A team DevSecOps project that I extended into one repeatable workflow running SAST, dependency, secrets, container and infrastructure-as-code scanners locally, in Docker and in GitHub Actions.",
+    highlights: [
+      "Semgrep, pip-audit, TruffleHog, Gitleaks, Trivy, Checkov and Bandit run from a single script",
+      "One config file sets thresholds for local, Docker and CI runs",
+      "SARIF upload to the Security tab and per-scan report artifacts",
+      "In-app results dashboard fed by an API that reads the scan reports",
+    ],
+    tech: ["Python", "Flask", "Docker", "GitHub Actions", "Semgrep", "Trivy"],
+    image: "/projects/vulnerability-scanning-pipeline.jpg", imageAlt: "Scan results panel listing seven security scans, all passing",
+    link: "https://github.com/bhuwan1321/vulnerability-scanning-pipeline",
+    cta: { label: "GitHub", kind: "github", href: "https://github.com/bhuwan1321/vulnerability-scanning-pipeline" },
+  },
+  {
+    num: "08", category: "personal",
+    badge: "GitHub", badgeKind: "github",
+    title: "Task Manager — Full-Stack App",
+    tagline: "React and Express app with PostgreSQL persistence.",
+    desc: "A full-stack task manager with due dates, overdue detection, filtering and a statistics dashboard, backed by a REST API and a PostgreSQL database.",
+    highlights: [
+      "REST API with parameterized SQL queries and server-side validation",
+      "Completion donut chart and a 7-day completed-task chart",
+      "Overdue detection from due dates, with All, Pending and Completed filters",
+      "Tested end to end against a real PostgreSQL database",
+    ],
+    tech: ["React", "Vite", "Node.js", "Express", "PostgreSQL", "Recharts"],
+    image: "/projects/task-manager.jpg", imageAlt: "Task Manager dashboard with task counts, a completion donut chart and a seven-day activity chart",
+    link: "https://github.com/bhuwan1321/task-manager",
+    cta: { label: "GitHub", kind: "github", href: "https://github.com/bhuwan1321/task-manager" },
+  },
+  {
+    num: "09", category: "personal",
+    badge: "GitHub", badgeKind: "github",
+    title: "Engineer Dashboard — Personal Tracker",
+    tagline: "Fitness, DSA, academics and career in one dashboard.",
+    desc: "A Next.js and Firebase dashboard for tracking fitness logs, DSA practice, academics and engineering tasks, with Google sign-in.",
+    highlights: [
+      "Sections for diet, workout, DSA, engineering tasks, academics and a health monitor",
+      "Firestore security rules limit every collection to the signed-in owner",
+      "Streaks, charts and a 30-day heatmap",
+    ],
+    tech: ["Next.js", "TypeScript", "Firebase", "Tailwind CSS", "Recharts", "Zustand"],
+    image: "/projects/engineer-dashboard.jpg", imageAlt: "Engineer Dashboard sign-in screen with a Sign in with Google button",
+    link: "https://github.com/bhuwan1321/engineer-dashboard",
+    cta: { label: "GitHub", kind: "github", href: "https://github.com/bhuwan1321/engineer-dashboard" },
   },
 ];
 
@@ -840,6 +898,9 @@ export default function Portfolio() {
           {projects.map((p) => (
             <div key={p.num}
                  className={`pf-project-card${p.featured ? " pf-project-featured" : ""}${p.category === "experience" ? " pf-project-experience" : ""}`}>
+              {!p.featured && p.image && (
+                <img className="pf-project-cardshot" src={p.image} alt={p.imageAlt} loading="lazy" />
+              )}
               <div>
                 <div className="pf-project-top">
                   <div className="pf-project-num">{p.num}</div>
@@ -875,9 +936,15 @@ export default function Portfolio() {
                 )}
               </div>
               {p.featured && (
-                <div className="pf-project-visual">
-                  <span>{p.visual}</span>
-                  <span style={{ fontSize: "1rem", color: "rgba(200,245,96,.15)", marginTop: ".5rem" }}>{p.visualSub}</span>
+                <div className={`pf-project-visual${p.image ? " pf-project-shot" : ""}`}>
+                  {p.image ? (
+                    <img src={p.image} alt={p.imageAlt} loading="lazy" />
+                  ) : (
+                    <>
+                      <span>{p.visual}</span>
+                      <span style={{ fontSize: "1rem", color: "rgba(200,245,96,.15)", marginTop: ".5rem" }}>{p.visualSub}</span>
+                    </>
+                  )}
                 </div>
               )}
             </div>
